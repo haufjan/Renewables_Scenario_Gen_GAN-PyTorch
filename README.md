@@ -11,4 +11,4 @@
 ### Motivation
   The initial Renewables Scenario Generation GAN code is based on Tensorflow 1, now being deprecated.
 
-  Original Renewables Scenario Generation GAN codebase: https://github.com/chennnnnyize-zz/Renewables_Scenario_Gen_GAN.git
+  Original codebase: https://github.com/chennnnnyize-zz/Renewables_Scenario_Gen_GAN.git
