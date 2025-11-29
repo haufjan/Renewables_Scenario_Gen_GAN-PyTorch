@@ -1,52 +1,57 @@
 import argparse
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
 from load import load_solar_data, load_wind_data
 from model import GAN
+from util import visualize_resuls
 
-
-
-def main(args):
-    """Main function"""
-    #Check available device
-    device = (
-    'cuda'
-    if torch.cuda.is_available()
-    else 'mps'
-    if torch.backends.mps.is_available()
-    else 'cpu')
+def main(args: argparse.Namespace) -> tuple:
+    # Check available device
+    if torch.cuda.is_available():
+        device = 'cuda'
+    elif torch.backends.mps.is_available():
+        device = 'mps'
+    else:
+        device = 'cpu'
 
     print('Current device:', device)
 
-    #Load data and labels
-    trX = None
-    trY = None
+    # Load data and labels
+    tr_x = None
+    tr_y = None
     m = None
     if args.data.endswith('solar.csv'):
-        trX, trY, m = load_solar_data(args.data, args.label)
+        tr_x, tr_y, m = load_solar_data(args.data, args.label)
     elif args.data.endswith('wind.csv'):
-        trX, trY, m = load_wind_data(args.data, args.label)
+        tr_x, tr_y, m = load_wind_data(args.data, args.label)
     
-    #Determine number of unique labels
-    events_num = len(np.unique(trY))
+    # Determine number of unique labels
+    events_num = len(np.unique(tr_y))
 
-    #Instantiate model
-    GAN_model = GAN(epochs=args.epochs,
+    # Instantiate model
+    model = GAN(epochs=args.epochs,
                     batch_size=args.batch_size,
                     learning_rate=args.learning_rate,
                     dim_y=events_num,
                     device=device).to(device)
     
-    #Start training
-    GAN_model.fit(trX, trY)
+    # Start training
+    model.fit(tr_x, tr_y)
 
-    #Generate samples
-    data_gen, labels_sampled = GAN_model.predict()
+    # Generate samples
+    data_gen, labels_sampled = model.predict()
 
-    #Rescaling
+    # Rescaling
+    data_real = tr_x*m
     data_gen = data_gen*m
 
-    return data_gen
+
+    # Evaluation
+    visualize_resuls(data_real, data_gen, tr_y, labels_sampled)
+    plt.show()
+
+    return data_gen, labels_sampled
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -79,50 +84,6 @@ if __name__ == '__main__':
         type=float
     )
 
-    #Exclude the following structural parameters
-    # parser.add_argument(
-    #     '--image_shape',
-    #     help='Define image shape (channels, height, width)',
-    #     default=[1, 24, 24],
-    #     tpye=list
-    # )
-    # parser.add_argument(
-    #     '--dim_y',
-    #     help='Sets number of channels (corresponds to the number of unique labels)',
-    #     default=6,
-    #     type=int
-    # )
-    # parser.add_argument(
-    #     '--dim_z',
-    #     help='Sets number of channels for sampled noise images',
-    #     default=100,
-    #     type=int
-    # )
-    # parser.add_argument(
-    #     '--dim_W1',
-    #     help='Layer dimension parameter',
-    #     default=1024,
-    #     type=int
-    # )
-    # parser.add_argument(
-    #     '--dim_W2',
-    #     help='Layer dimension parameter',
-    #     default=128,
-    #     type=int
-    # )
-    # parser.add_argument(
-    #     '--dim_W3',
-    #     help='Layer dimension parameter',
-    #     default=64,
-    #     type=int
-    # )
-    # parser.add_argument(
-    #     '--dim_channel',
-    #     help='Output dimension channels',
-    #     default=1,
-    #     type=int
-    # )
-
     args = parser.parse_args()
 
-    data_gen = main(args)
+    data_gen, labels_sampled = main(args)

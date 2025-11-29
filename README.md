@@ -1,4 +1,4 @@
-# Renewables_Scenario_Gen_GAN-TensorFlow
+# Renewables_Scenario_Gen_GAN-PyTorch
 Unofficial implementation of Renewables Scenario Generation GAN (Chen et al., IEEE 2018) in PyTorch 2.
 
 Y. Chen, Y. Wang, D. Kirschen and B. Zhang, "Model-Free Renewable Scenario Generation Using Generative Adversarial Networks," in IEEE Transactions on Power Systems, vol. 33, no. 3, pp. 3265-3275, May 2018, doi: 10.1109/TPWRS.2018.2794541
@@ -12,10 +12,10 @@ Original Codebase: https://github.com/chennnnnyize-zz/Renewables_Scenario_Gen_GA
 ### Version Notes
 The model was implemented and tested using `Python==3.11.9`. Further, the following modules were utilized (see [Requirements File](./requirements.txt)):
 ```
-matplotlib==3.10.0
-numpy==2.2.1
-scipy==1.15.0
-torch==2.5.1
+matplotlib==3.10.7
+numpy==2.3.5
+scipy==1.16.3
+torch==2.9.1
 ```
 
 ### Usage
@@ -27,7 +27,7 @@ py train.py --data=datasets/solar.csv --label=datasets/solar_label.csv --epochs=
 ```
 
 ### Results
-The recreated experiments demonstrate the GAN's capability to resemble the data distribution and leverage the provided labels for conditioned generation of certain scenarios, even after short training trials. Obviously, the training can be extended and parameters adapted to improve the GAN's fidelity.
+The recreated experiments demonstrate the GAN's capability to resemble the data distribution and leverage the provided labels for conditioned generation of certain scenarios, even after short training trials. The training can be extended and parameters adapted to improve the GAN's fidelity.
 
 ##### Solar Generation
 The plots present synthesized [solar](./renewables_scenario_gen_gan_solar.ipynb) power generation scenarios arranged by ordinal label values.
